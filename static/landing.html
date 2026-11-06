@@ -101,6 +101,33 @@
   .sources { margin-top: 28px; font-size: 12.5px; color: rgba(255,248,240,.55); }
   .sources a { color: rgba(255,248,240,.75); }
 
+
+  /* proof matters */
+  .proof { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: start; }
+  .facts { display: flex; flex-direction: column; gap: 14px; }
+  .fact { display: grid; grid-template-columns: 120px 1fr; gap: 20px; align-items: center; background: var(--paper);
+          border: 1px solid var(--line); border-radius: 24px; padding: 22px 24px; }
+  .fact .num { font: 600 40px/1 var(--serif); letter-spacing: -1px; color: var(--copper); }
+  .fact .num small { font-size: .5em; }
+  .fact h3 { margin: 0 0 4px; font: 600 18px var(--serif); }
+  .fact p { margin: 0; color: var(--ink-2); font-size: 14.5px; }
+  .fact a { color: var(--muted); font-size: 12px; }
+  .story { margin-top: 56px; background: var(--paper); border: 1.5px solid var(--ink); border-radius: 32px; padding: 34px 36px; }
+  .story-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+  .story h3 { margin: 0; font: 600 28px var(--serif); letter-spacing: -.5px; }
+  .story .note { font-size: 12px; color: var(--muted); }
+  .timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 26px; position: relative; }
+  .timeline::before { content: ""; position: absolute; top: 19px; left: 20px; right: 20px; height: 2px;
+                      background: repeating-linear-gradient(90deg, var(--copper) 0 8px, transparent 8px 14px); }
+  .tl { position: relative; }
+  .tl .dot { width: 40px; height: 40px; border-radius: 50%; background: var(--copper-soft); border: 2px solid var(--copper);
+             display: grid; place-items: center; font-size: 18px; margin-bottom: 14px; position: relative; }
+  .tl b { display: block; font: 600 16px var(--serif); margin-bottom: 4px; }
+  .tl span { color: var(--ink-2); font-size: 14px; }
+  .honest { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); font-size: 14px; color: var(--ink-2); }
+  @media (max-width: 960px) { .proof { grid-template-columns: 1fr; gap: 32px; } .timeline { grid-template-columns: 1fr 1fr; } .timeline::before { display: none; } }
+  @media (max-width: 560px) { .fact { grid-template-columns: 1fr; gap: 8px; } .timeline { grid-template-columns: 1fr; } .story { padding: 24px; } }
+
   /* feed */
   .feed-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
   .feed { background: var(--paper); border: 1px solid var(--line); border-radius: 28px; padding: 10px; box-shadow: 0 30px 60px -36px rgba(59,34,50,.45); }
@@ -232,6 +259,37 @@
       <div class="stat"><div class="num">92<small>%</small></div><p>of working women in low-income countries earn in the informal economy, off the books and invisible to lenders.</p></div>
     </div>
     <div class="sources">Sources: <a href="https://blogs.worldbank.org/en/opendata/more-women-have-financial-accounts--yet-equal-access-and-use-rem" target="_blank" rel="noopener">World Bank, Global Findex 2025</a> · <a href="https://we-fi.org/wp-content/uploads/2026/01/Final-A2F-Evidence-Snapshot.pdf" target="_blank" rel="noopener">IFC, MSME Finance Gap Report (2025), via We-Fi</a> · <a href="https://www.wiego.org/informal-economy/statistical-picture/" target="_blank" rel="noopener">ILO, Women and Men in the Informal Economy (2023), via WIEGO</a></div>
+  </div>
+</section>
+
+<section id="proof">
+  <div class="wrap">
+    <div class="proof">
+      <div>
+        <div class="eyebrow">Why proof matters</div>
+        <h2>Lenders don't doubt her. <em>They just can't see her.</em></h2>
+        <p class="lede">Women are some of the best borrowers in the world, but a loan officer can't underwrite a text thread. A clean record of real income is what turns "maybe" into "approved."</p>
+      </div>
+      <div class="facts">
+        <div class="fact"><div class="num">3.6<small>%</small></div><div><h3>Women repay.</h3><p>Loans to women-owned small businesses go bad less often than average (3.6% vs 3.8%).</p><a href="https://www.ifc.org/content/dam/ifc/doclink/latest/lower-npls-for-women-owned-smes.pdf" target="_blank" rel="noopener">IFC Banking on Women, 2024 data</a></div></div>
+        <div class="fact"><div class="num">19<small>%</small></div><div><h3>…yet they get a fraction of the loans.</h3><p>Women-owned firms make up just 19% of small-business loan portfolios at emerging-market banks.</p><a href="https://www.ifc.org/content/dam/ifc/doclink/latest/lower-npls-for-women-owned-smes.pdf" target="_blank" rel="noopener">IFC Banking on Women, 2024 data</a></div></div>
+        <div class="fact"><div class="num">38K<small>+</small></div><div><h3>Cash flow beats credit scores.</h3><p>A study of 38,000+ small-business loans found cash-flow records predict repayment better than personal credit scores alone, especially for young, low-score businesses. That record is exactly what Penny builds.</p><a href="https://finreglab.org/wp-content/uploads/2025/06/FinRegLab_2025-06-03_Press-Release_Study-Shows-Cash-Flow-Data-Can-Expand-Small-Business-Lending-1.pdf" target="_blank" rel="noopener">FinRegLab &amp; NYU Stern, 2025</a></div></div>
+      </div>
+    </div>
+
+    <div class="story">
+      <div class="story-head">
+        <h3>What one small loan can do</h3>
+        <span class="note">An illustration with made-up numbers, not a real person</span>
+      </div>
+      <div class="timeline">
+        <div class="tl"><div class="dot">🧾</div><b>Proof</b><span>Penny's report shows Maya's 7 steady weeks: about $620 a week, 9 repeat clients.</span></div>
+        <div class="tl"><div class="dot">🤝</div><b>A $500 loan</b><span>A microlender approves her on that record, not on a credit score she doesn't have.</span></div>
+        <div class="tl"><div class="dot">📦</div><b>Bulk supplies</b><span>She buys braiding hair wholesale instead of pack by pack, so every appointment costs her less.</span></div>
+        <div class="tl"><div class="dot">💺</div><b>A second chair</b><span>She takes Saturday walk-ins and repays from the cash flow Penny keeps logging.</span></div>
+      </div>
+      <p class="honest"><b>The honest version:</b> research on microloans finds modest gains for the average borrower but much bigger ones for strong, growing businesses (<a href="https://povertyactionlab.org/finance" target="_blank" rel="noopener">J-PAL</a>). That's the point of Penny: help lenders find the women whose businesses are ready, and give those women the proof.</p>
+    </div>
   </div>
 </section>
 
