@@ -88,7 +88,12 @@ class AskBody(BaseModel):
 
 
 @app.get("/")
-def index():
+def landing():
+    return FileResponse(STATIC / "landing.html")
+
+
+@app.get("/demo")
+def demo():
     return FileResponse(STATIC / "index.html")
 
 

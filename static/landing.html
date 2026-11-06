@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Penny</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #f8f2ea; --paper: #fffdf9; --ink: #2a1f22; --ink-2: #5b4c4f; --muted: #9a8c88;
+    --line: #ece3d8; --copper: #b8673d; --copper-soft: #f6e6da; --plum: #3b2232; --green: #2f9e6b; --blue: #0a84ff;
+    --serif: "Fraunces", Georgia, serif; --sans: "Inter", -apple-system, system-ui, sans-serif;
+    --ios: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; font: 16px/1.55 var(--sans); color: var(--ink); background: var(--cream); overflow-x: hidden; }
+  a { color: inherit; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  section { padding: 96px 0; }
+  .eyebrow { font: 600 12px var(--sans); letter-spacing: 1.6px; text-transform: uppercase; color: var(--copper); }
+  h2 { font: 600 clamp(34px, 5vw, 54px)/1.05 var(--serif); letter-spacing: -1.2px; margin: 12px 0 16px; }
+  h2 em, h1 em { font-style: italic; color: var(--copper); font-weight: 500; }
+  .lede { color: var(--ink-2); font-size: 19px; max-width: 620px; }
+  .center { text-align: center; } .center .lede { margin: 0 auto; }
+
+  .btn { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; font: 600 16px var(--sans);
+         border-radius: 999px; padding: 15px 26px; transition: transform .15s, box-shadow .15s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn.dark { background: var(--ink); color: #fff8f0; box-shadow: 0 12px 24px -12px rgba(42,31,34,.6); }
+  .btn.light { background: transparent; color: var(--ink); border: 1.5px solid var(--ink); }
+
+  .coin { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; flex: none;
+          font: 600 17px var(--serif); color: #fff8f0;
+          background: radial-gradient(circle at 32% 28%, #f0b48c, var(--copper) 55%, #8a4526);
+          box-shadow: inset 0 0 0 2px rgba(255,255,255,.25), 0 4px 12px rgba(184,103,61,.35); }
+  .coin.xs { width: 22px; height: 22px; font-size: 11px; box-shadow: inset 0 0 0 1.5px rgba(255,255,255,.25); }
+
+  /* nav */
+  nav { position: sticky; top: 0; z-index: 10; background: rgba(248,242,234,.82); backdrop-filter: blur(10px); border-bottom: 1px solid transparent; }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+  .logo { display: flex; align-items: center; gap: 10px; font: 600 24px var(--serif); text-decoration: none; letter-spacing: -.4px; }
+  .links { display: flex; gap: 28px; align-items: center; font-size: 15px; }
+  .links a { text-decoration: none; color: var(--ink-2); } .links a:hover { color: var(--ink); }
+  .links .btn { padding: 10px 18px; font-size: 14px; color: #fff8f0; }
+
+  /* hero */
+  .hero { padding: 56px 0 40px; position: relative; }
+  .hero .wrap { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; }
+  h1 { font: 600 clamp(46px, 7vw, 84px)/.98 var(--serif); letter-spacing: -2.4px; margin: 18px 0 22px; }
+  .hero .lede { font-size: 20px; }
+  .ctas { display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+  .tag { display: inline-flex; align-items: center; gap: 8px; background: var(--paper); border: 1px solid var(--line);
+         padding: 6px 14px 6px 6px; border-radius: 999px; font-size: 14px; color: var(--ink-2); }
+  .tag b { background: var(--copper-soft); color: var(--copper); padding: 2px 10px; border-radius: 999px; font-size: 12px; }
+  .doodle { position: absolute; pointer-events: none; }
+  .doodle path, .doodle circle { fill: none; stroke: var(--ink); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* hero phone */
+  .stage { position: relative; display: grid; place-items: center; min-height: 600px; }
+  .blob { position: absolute; width: 440px; height: 440px; border-radius: 50%; background: radial-gradient(circle, #f1cdb4, #f6e6da 60%, transparent 70%); }
+  .phone { position: relative; width: 300px; height: 590px; background: #1b1517; border-radius: 48px; padding: 10px;
+           box-shadow: 0 0 0 1.5px #3a3033, 0 40px 80px -30px rgba(59,34,50,.55); transform: rotate(3deg); }
+  .screen { height: 100%; background: #fff; border-radius: 39px; overflow: hidden; display: flex; flex-direction: column; font-family: var(--ios); }
+  .island { width: 90px; height: 26px; background: #000; border-radius: 16px; margin: 10px auto 6px; flex: none; }
+  .ch { text-align: center; font-size: 11px; color: #555; padding-bottom: 8px; border-bottom: .5px solid #eee; }
+  .ch .avs { display: flex; justify-content: center; margin-bottom: 3px; }
+  .ch .av { width: 26px; height: 26px; border-radius: 50%; color: #fff; display: grid; place-items: center; font: 600 11px var(--ios); border: 2px solid #fff; margin-left: -7px; }
+  .ch .avs .coin { width: 26px; height: 26px; font-size: 12px; margin-left: -7px; border: 2px solid #fff; }
+  .msgs { flex: 1; padding: 10px; display: flex; flex-direction: column; gap: 5px; justify-content: flex-end; overflow: hidden; }
+  .m { max-width: 80%; padding: 7px 11px; border-radius: 17px; font-size: 13.5px; line-height: 1.3; opacity: 0; transform: translateY(8px); }
+  .m.l { background: #ececf0; align-self: flex-start; border-bottom-left-radius: 5px; }
+  .m.r { background: linear-gradient(180deg, #2b95ff, #0a7bf0); color: #fff; align-self: flex-end; border-bottom-right-radius: 5px; }
+  .m.show { opacity: 1; transform: none; transition: all .35s ease-out; }
+  .float-card { position: absolute; right: -10px; bottom: 120px; width: 250px; background: var(--paper); border: 1px solid var(--line);
+                border-radius: 20px; padding: 14px 16px; box-shadow: 0 24px 40px -20px rgba(59,34,50,.5); transform: rotate(-3deg) scale(.9);
+                opacity: 0; transition: all .45s cubic-bezier(.2,1.4,.4,1); }
+  .float-card.show { opacity: 1; transform: rotate(-3deg) scale(1); }
+  .fc-top { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-2); margin-bottom: 8px; }
+  .fc-kind { font: 600 10.5px var(--sans); letter-spacing: .8px; text-transform: uppercase; color: var(--copper); }
+  .fc-amt { font: 600 30px/1 var(--serif); margin: 2px 0 4px; }
+  .fc-desc { font-size: 13px; color: var(--ink-2); }
+  .fc-btns { display: flex; gap: 6px; margin-top: 10px; }
+  .fc-btns span { flex: 1; text-align: center; border-radius: 9px; padding: 6px; font: 600 12px var(--sans); background: #f1ebe4; color: var(--ink-2); }
+  .fc-btns span:first-child { background: var(--ink); color: #fff; }
+
+  /* stats */
+  .stats { background: var(--plum); color: #fff8f0; border-radius: 40px; margin: 0 16px; }
+  .stats .eyebrow { color: #f0b48c; }
+  .stats .lede { color: rgba(255,248,240,.75); }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 56px; }
+  .stat { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 26px; padding: 26px 24px; }
+  .stat .num { font: 600 clamp(44px, 5vw, 60px)/1 var(--serif); letter-spacing: -1.5px; color: #fff; }
+  .stat .num small { font-size: .5em; letter-spacing: 0; }
+  .stat p { margin: 12px 0 0; color: rgba(255,248,240,.78); font-size: 15px; }
+  .stat.hot { background: linear-gradient(160deg, #c97a4f, #9d5130); border-color: transparent; }
+  .stat.hot p { color: #fff3e8; }
+  .sources { margin-top: 28px; font-size: 12.5px; color: rgba(255,248,240,.55); }
+  .sources a { color: rgba(255,248,240,.75); }
+
+  /* feed */
+  .feed-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+  .feed { background: var(--paper); border: 1px solid var(--line); border-radius: 28px; padding: 10px; box-shadow: 0 30px 60px -36px rgba(59,34,50,.45); }
+  .fi { display: flex; align-items: center; gap: 14px; padding: 14px 14px; border-radius: 18px; animation: slide .5s ease-out both; }
+  .fi + .fi { border-top: 1px solid var(--line); border-radius: 0; }
+  .fi .ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 18px; background: var(--copper-soft); flex: none; }
+  .fi .tx { flex: 1; font-size: 15px; } .fi .tx small { display: block; color: var(--muted); font-size: 13px; }
+  .fi .amt { font: 600 18px var(--serif); } .fi .when { font-size: 12px; color: var(--muted); width: 70px; text-align: right; }
+  @keyframes slide { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: none; } }
+
+  /* handles it */
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 36px 0 28px; }
+  .chips button { border: 1.5px solid var(--ink); background: transparent; border-radius: 999px; padding: 9px 18px; font: 500 15px var(--sans); cursor: pointer; color: var(--ink); }
+  .chips button.on { background: var(--ink); color: #fff8f0; }
+  .asks { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .ask { background: var(--paper); border: 1px solid var(--line); border-radius: 22px; padding: 22px; min-height: 150px; display: flex; flex-direction: column; justify-content: space-between; gap: 18px; }
+  .ask q { font: 500 18px/1.35 var(--serif); quotes: "\201C" "\201D"; }
+  .ask .res { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink-2); }
+  .ask .res b { color: var(--green); font-weight: 600; }
+  .ask .res b.no { color: var(--muted); }
+
+  /* steps */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 52px; }
+  .step { background: var(--paper); border: 1px solid var(--line); border-radius: 28px; padding: 28px; position: relative; }
+  .step .n { font: 500 15px var(--serif); color: var(--muted); }
+  .step h3 { font: 600 24px/1.15 var(--serif); margin: 10px 0 8px; letter-spacing: -.4px; }
+  .step p { color: var(--ink-2); margin: 0 0 20px; font-size: 15px; }
+  .status { display: flex; flex-direction: column; gap: 8px; }
+  .status span { display: flex; align-items: center; gap: 10px; font-size: 13.5px; color: var(--ink-2); }
+  .status i { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--line); display: grid; place-items: center; font-style: normal; font-size: 10px; flex: none; }
+  .status .done i { background: var(--green); border-color: var(--green); color: #fff; }
+  .status .now i { border-color: var(--copper); border-top-color: transparent; animation: spin 1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* trust */
+  .trust { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 48px; }
+  .card { border: 1.5px solid var(--ink); border-radius: 28px; padding: 30px; background: var(--paper); }
+  .card .big { font-size: 34px; }
+  .card h3 { font: 600 22px var(--serif); margin: 14px 0 8px; }
+  .card p { color: var(--ink-2); margin: 0; font-size: 15px; }
+
+  /* faq */
+  .faq { max-width: 820px; margin: 40px auto 0; }
+  details { border-top: 1.5px solid var(--ink); padding: 22px 4px; }
+  details:last-child { border-bottom: 1.5px solid var(--ink); }
+  summary { list-style: none; cursor: pointer; display: flex; gap: 22px; align-items: baseline; font: 600 21px var(--serif); }
+  summary::-webkit-details-marker { display: none; }
+  summary .n { font: 500 15px var(--serif); color: var(--muted); }
+  summary::after { content: "+"; margin-left: auto; font: 400 26px var(--sans); transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { margin: 12px 0 0 46px; color: var(--ink-2); }
+
+  /* final */
+  .final { text-align: center; padding: 120px 0; position: relative; }
+  .final h2 { font-size: clamp(44px, 7vw, 80px); }
+  footer { border-top: 1px solid var(--line); padding: 36px 0; font-size: 13px; color: var(--muted); }
+  footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+  @media (max-width: 960px) {
+    .hero .wrap, .feed-wrap { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .asks, .steps, .trust { grid-template-columns: 1fr; }
+    .links a:not(.btn) { display: none; }
+    .stage { min-height: 540px; }
+  }
+  @media (max-width: 560px) {
+    section { padding: 64px 0; } .wrap { padding: 0 16px; }
+    .stat-grid { grid-template-columns: 1fr; } .stats { margin: 0; border-radius: 28px; }
+    .float-card { right: -4px; width: 220px; } .phone { width: 270px; height: 540px; }
+    details p { margin-left: 0; } .doodle { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#"><span class="coin">P</span>Penny</a>
+    <div class="links">
+      <a href="#why">Why Penny</a>
+      <a href="#how">How it works</a>
+      <a href="#faq">Questions</a>
+      <a class="btn dark" href="/demo">Get started</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <svg class="doodle" style="left:2%;top:30px" width="70" height="70" viewBox="0 0 70 70"><path d="M35 8v14M35 48v14M8 35h14M48 35h14M16 16l9 9M45 45l9 9M54 16l-9 9M25 45l-9 9"/></svg>
+  <svg class="doodle" style="left:44%;bottom:30px" width="120" height="50" viewBox="0 0 120 50"><path d="M5 30c15-20 25 15 40 0s25-20 40 0 20 10 30-5"/></svg>
+  <div class="wrap">
+    <div>
+      <span class="tag"><b>New</b> Live on iMessage · WhatsApp next</span>
+      <h1>Your texts are <em>your receipts.</em></h1>
+      <p class="lede">Add Penny to your client chats. She quietly logs every booking, deposit and IOU, and turns them into proof of income a lender will take seriously.</p>
+      <div class="ctas">
+        <a class="btn dark" href="/demo">Get started →</a>
+        <a class="btn light" href="#how">See how it works</a>
+      </div>
+    </div>
+    <div class="stage">
+      <div class="blob"></div>
+      <div class="phone"><div class="screen">
+        <div class="island"></div>
+        <div class="ch"><div class="avs"><div class="av" style="background:#c77d5a">M</div><div class="av" style="background:#7d6bb3">J</div><div class="coin">P</div></div>Maya, Jess &amp; Penny</div>
+        <div class="msgs" id="heroMsgs"></div>
+      </div></div>
+      <div class="float-card" id="heroCard">
+        <div class="fc-top"><span class="coin xs">P</span>Penny · just now</div>
+        <div class="fc-kind">New booking</div>
+        <div class="fc-amt">$200</div>
+        <div class="fc-desc"><b>Jess</b> · knotless braids · Sat 10am</div>
+        <div class="fc-btns"><span>Log it</span><span>Edit</span></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="why" class="stats">
+  <div class="wrap">
+    <div class="eyebrow">Why Penny</div>
+    <h2>Millions of women run real businesses. <em>On paper, they don't exist.</em></h2>
+    <p class="lede">Braiders, bakers, cleaners, nannies. The work is real and the money is real, but it all lives in text threads and payment apps. No books means no proof, and no proof means no loan.</p>
+    <div class="stat-grid">
+      <div class="stat"><div class="num">14.5M</div><p>women-owned businesses in the US, 39% of all firms.</p></div>
+      <div class="stat hot"><div class="num">6.2<small>%</small></div><p>of US business revenue goes to them. 39% of the firms, 6% of the money.</p></div>
+      <div class="stat"><div class="num">~9<small> in </small>10</div><p>have no employees. She's the stylist, the scheduler <i>and</i> the accountant.</p></div>
+      <div class="stat"><div class="num">1<small> in </small>10</div><p>US adults have no credit record at all, so lenders can't see them.</p></div>
+    </div>
+    <div class="sources">Sources: <a href="https://smallbusinessresources.wf.com/wp-content/uploads/2025/01/wells-fargo-2025-impact-of-women-owned-businesses.pdf" target="_blank" rel="noopener">Wells Fargo, Impact of Women-Owned Businesses (2024 data)</a> · <a href="https://www.consumerfinance.gov/about-us/newsroom/cfpb-report-finds-26-million-consumers-are-credit-invisible" target="_blank" rel="noopener">CFPB, Credit Invisibles</a></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap feed-wrap">
+    <div>
+      <div class="eyebrow">Meet Penny</div>
+      <h2>She's been busy <em>while you work.</em></h2>
+      <p class="lede">Penny reads along in your chats and only speaks up when money actually moves. Every entry waits for your one-tap OK before it hits the books.</p>
+      <div class="ctas"><a class="btn dark" href="/demo">Try it yourself →</a></div>
+    </div>
+    <div class="feed" id="feed"></div>
+  </div>
+</section>
+
+<section class="center">
+  <div class="wrap">
+    <div class="eyebrow">Penny handles it</div>
+    <h2>She knows a deal <em>from a maybe.</em></h2>
+    <p class="lede">Clients don't text like spreadsheets. Penny understands haggling, half-now-half-later, "same as last time" and payment screenshots.</p>
+    <div class="chips" id="chips"></div>
+    <div class="asks" id="asks"></div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow">How it works</div>
+      <h2>Three steps. <em>Zero spreadsheets.</em></h2>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="n">01</div>
+        <h3>Add Penny to the chat</h3>
+        <p>Like adding a friend to a group text. No app to download, nothing new to learn.</p>
+        <div class="status"><span class="done"><i>✓</i>Penny joined "Maya, Jess &amp; Penny"</span><span class="done"><i>✓</i>Introduced herself once</span><span class="done"><i>✓</i>Went quiet</span></div>
+      </div>
+      <div class="step">
+        <div class="n">02</div>
+        <h3>She spots the money</h3>
+        <p>Deals, deposits, balances and supply runs, pulled from the conversation and the screenshots.</p>
+        <div class="status"><span class="done"><i>✓</i>Reading the chat</span><span class="done"><i>✓</i>"ok deal" → $200 booking</span><span class="now"><i></i>Texting Maya to confirm</span></div>
+      </div>
+      <div class="step">
+        <div class="n">03</div>
+        <h3>Your texts become receipts</h3>
+        <p>After a few weeks, a clean cash-flow report built from transactions you confirmed. Ready for a lender.</p>
+        <div class="status"><span class="done"><i>✓</i>76 transactions confirmed</span><span class="done"><i>✓</i>$623 average weekly income</span><span class="done"><i>✓</i>Report ready</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow">Built on trust</div>
+      <h2>A bookkeeper <em>you can count on.</em></h2>
+    </div>
+    <div class="trust">
+      <div class="card"><div class="big">🤫</div><h3>Quiet in your chats</h3><p>Penny never talks in client threads after her intro. Everything goes to you, privately.</p></div>
+      <div class="card"><div class="big">👆</div><h3>You approve everything</h3><p>Nothing hits the books without your tap. Fix an amount or skip it in one reply.</p></div>
+      <div class="card"><div class="big">🧮</div><h3>AI reads. Math counts.</h3><p>Claude understands the conversation. Balances and totals are plain arithmetic, so the numbers can't be made up.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="center"><div class="eyebrow">Questions</div><h2>Good to know</h2></div>
+    <div class="faq">
+      <details open><summary><span class="n">01</span>Do I need a new app?</summary><p>No. Penny is a contact you add to your existing group texts. Today that's iMessage, and WhatsApp is next.</p></details>
+      <details><summary><span class="n">02</span>Will my clients know she's there?</summary><p>Yes. Penny introduces herself once when she's added, so everyone knows. After that she stays quiet and only messages you.</p></details>
+      <details><summary><span class="n">03</span>What if Penny gets something wrong?</summary><p>Every entry waits for your OK. Reply with the right amount to fix it, or "no" to skip it.</p></details>
+      <details><summary><span class="n">04</span>How does this help me get a loan?</summary><p>Lenders want proof of steady income. Penny's report shows weekly income, consistency, repeat clients and money owed, all built from transactions you confirmed.</p></details>
+      <details><summary><span class="n">05</span>Is this demo using real people's data?</summary><p>No. Every name, message and number in this demo is synthetic.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <svg class="doodle" style="left:12%;top:60px" width="60" height="60" viewBox="0 0 60 60"><circle cx="30" cy="30" r="22"/><path d="M22 30l6 6 12-12"/></svg>
+  <svg class="doodle" style="right:12%;bottom:80px" width="90" height="60" viewBox="0 0 90 60"><path d="M5 50c20-40 50-40 70-10M62 32l14 8 2-16"/></svg>
+  <div class="wrap">
+    <h2>Ready to get <em>your receipts?</em></h2>
+    <p class="lede" style="margin:0 auto 34px">See Penny work in a live chat in under a minute.</p>
+    <a class="btn dark" href="/demo">Get started →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>🪙 Penny · Built with Claude for women who run their business by text.</span>
+    <span>All demo data is synthetic.</span>
+  </div>
+</footer>
+
+<script>
+// Hero: a short chat plays, then Penny's card pops in. Loops.
+const HERO = [["l", "can you do knotless sat? 180?"], ["r", "200 if you bring your own hair"], ["l", "ok deal 🙏"]];
+const msgs = document.getElementById("heroMsgs"), card = document.getElementById("heroCard");
+async function loop() {
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+  while (true) {
+    msgs.innerHTML = ""; card.classList.remove("show");
+    for (const [side, text] of HERO) {
+      const el = document.createElement("div"); el.className = `m ${side}`; el.textContent = text;
+      msgs.appendChild(el); await wait(60); el.classList.add("show"); await wait(1100);
+    }
+    await wait(500); card.classList.add("show"); await wait(4200);
+  }
+}
+loop();
+
+// Feed: a rolling log of things Penny caught (synthetic).
+const FEED = [
+  ["💸", "Deposit from Jess", "Cash App · knotless braids", "+$50"],
+  ["📅", "Booking: Priya's daughter", "kids' cornrows · Tue", "$80"],
+  ["🛍️", "Supply run", "braiding hair, 10 packs", "−$45"],
+  ["🙅🏾‍♀️", "Skipped: \"I'll venmo after payday\"", "not paid yet, so not logged", "—"],
+  ["✅", "Dana paid in full", "Venmo · medium twists", "+$90"],
+  ["📈", "Weekly summary sent to Maya", "$800 in · $350 owed to her", ""],
+];
+const feed = document.getElementById("feed");
+let fi = 0;
+function addFeed() {
+  const [ic, t, s, a] = FEED[fi++ % FEED.length];
+  const row = document.createElement("div"); row.className = "fi";
+  row.innerHTML = `<div class="ic">${ic}</div><div class="tx">${t}<small>${s}</small></div><div class="amt">${a}</div><div class="when">just now</div>`;
+  feed.prepend(row);
+  [...feed.children].forEach((r, i) => { const w = r.querySelector(".when"); if (w) w.textContent = i === 0 ? "just now" : `${i * 3} min ago`; });
+  while (feed.children.length > 5) feed.lastChild.remove();
+}
+for (let i = 0; i < 4; i++) addFeed();
+setInterval(addFeed, 2600);
+
+// "Penny handles it" examples
+const CATS = {
+  "Bookings": [["ok deal, see you saturday 🙏", "Logged $200 booking", true], ["hmm can you do 180?", "Still negotiating. Nothing logged", false], ["add beads like last time", "Logged +$15 (beads were $15 before)", true]],
+  "Deposits": [["sending half now, half thursday", "Logged $40 now, $40 still owed", true], ["📷 payment screenshot", "Read $50 from the image", true], ["I'll send it tonight", "Not paid yet, so I'll wait", false]],
+  "IOUs": [["who owes me money?", "Dana $90 · Aisha $110 · Camila $65", true], ["still owe you right?", "Yes, Dana owes $90 since Fri", true], ["I'll venmo after payday 😅", "Promise noted. Nothing logged", false]],
+  "Supplies": [["grabbed 10 packs of hair, $45", "Logged $45 expense", true], ["edge control was $22 smh", "Logged $22 expense", true], ["need beads before sat", "Just a note, not a purchase", false]],
+  "Lender report": [["how did I do this month?", "$2,490 in · 9 repeat clients", true], ["can I show this to a bank?", "Report ready · 76 confirmed transactions", true], ["what's my average week?", "$623 average over 7 weeks", true]],
+};
+const chips = document.getElementById("chips"), asks = document.getElementById("asks");
+function show(cat) {
+  chips.innerHTML = Object.keys(CATS).map((c) => `<button class="${c === cat ? "on" : ""}">${c}</button>`).join("");
+  chips.querySelectorAll("button").forEach((b) => b.onclick = () => show(b.textContent));
+  asks.innerHTML = CATS[cat].map(([q, r, ok]) =>
+    `<div class="ask"><q>${q}</q><div class="res"><span class="coin xs">P</span><b class="${ok ? "" : "no"}">${ok ? "✓" : "–"}</b>${r}</div></div>`).join("");
+}
+show("Bookings");
+</script>
+</body>
+</html>

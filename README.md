@@ -30,8 +30,8 @@ cp .env.example .env   # add your ANTHROPIC_API_KEY
 .venv/bin/uvicorn server:app --reload --port 8000
 ```
 
-Open http://localhost:8000. Use **▶ next scripted line** to play both sides of a conversation, or type
-your own. Click **Load 6 weeks of history**, then **Lender-ready report**.
+Open http://localhost:8000 for the landing page, or http://localhost:8000/demo for the demo. Use **▶ next scripted line** to play both sides of a conversation, or type
+your own. The demo opens with 6 weeks of synthetic history; **Reset demo** restores it. Open the **lender-ready report** from the books panel.
 
 ## How it works
 
