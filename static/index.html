@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Penny</title>
+<style>
+  :root {
+    --bg: #f2f2f7; --card: #fff; --ink: #1c1c1e; --muted: #8e8e93; --line: #e5e5ea;
+    --blue: #0a84ff; --gray: #e9e9eb; --green: #34c759; --red: #ff3b30; --accent: #5e3bd9;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.35 -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+         background: var(--bg); color: var(--ink); }
+  header { display: flex; align-items: center; gap: 12px; padding: 14px 20px; }
+  header h1 { margin: 0; font-size: 22px; letter-spacing: -.3px; }
+  header h1 span { color: var(--accent); }
+  header p { margin: 0; color: var(--muted); }
+  main { display: grid; grid-template-columns: 1fr 1fr 320px; gap: 16px; padding: 0 20px 20px;
+         height: calc(100vh - 64px); }
+  .phone { background: var(--card); border-radius: 22px; display: flex; flex-direction: column;
+           overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,.08); min-height: 0; }
+  .phone-head { padding: 12px 16px 10px; border-bottom: 1px solid var(--line); text-align: center; }
+  .phone-head .title { font-weight: 600; }
+  .phone-head .sub { font-size: 12px; color: var(--muted); }
+  .tabs { display: flex; gap: 6px; justify-content: center; margin-bottom: 8px; }
+  .tabs button { border: 0; background: var(--gray); border-radius: 14px; padding: 4px 12px; cursor: pointer; font: inherit; font-size: 13px; }
+  .tabs button.on { background: var(--ink); color: #fff; }
+  .thread { flex: 1; overflow-y: auto; padding: 12px 14px; display: flex; flex-direction: column; gap: 4px; }
+  .who { font-size: 11px; color: var(--muted); margin: 6px 10px 0; }
+  .who.right { align-self: flex-end; }
+  .b { max-width: 78%; padding: 8px 12px; border-radius: 18px; white-space: pre-wrap; word-wrap: break-word; }
+  .b.left { background: var(--gray); align-self: flex-start; border-bottom-left-radius: 6px; }
+  .b.right { background: var(--blue); color: #fff; align-self: flex-end; border-bottom-right-radius: 6px; }
+  .b.ledger { background: #efeafd; border: 1px solid #ddd3fb; }
+  .b .img { font-style: italic; opacity: .8; }
+  .actions { display: flex; gap: 6px; margin-top: 8px; }
+  .actions button { border: 0; border-radius: 12px; padding: 5px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+  .yes { background: var(--green); color: #fff; } .edit { background: #fff; } .no { background: #fff; color: var(--red); }
+  .done-tag { font-size: 12px; margin-top: 6px; color: var(--muted); }
+  .compose { border-top: 1px solid var(--line); padding: 10px; display: flex; gap: 8px; align-items: center; }
+  .compose input[type=text] { flex: 1; border: 1px solid var(--line); border-radius: 18px; padding: 8px 14px; font: inherit; outline: none; }
+  .compose button, .compose label { border: 0; background: var(--blue); color: #fff; border-radius: 16px; padding: 7px 12px; font: inherit; font-size: 14px; cursor: pointer; }
+  .compose label { background: var(--gray); color: var(--ink); }
+  .compose select { font: inherit; border-radius: 10px; border: 1px solid var(--line); padding: 5px; }
+  .script { padding: 0 10px 10px; display: flex; gap: 8px; align-items: center; font-size: 12px; color: var(--muted); }
+  .script button { border: 1px dashed var(--muted); background: transparent; border-radius: 12px; padding: 4px 10px; cursor: pointer; font: inherit; }
+  .side { display: flex; flex-direction: column; gap: 12px; overflow-y: auto; }
+  .card { background: var(--card); border-radius: 16px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .card h3 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .5px; color: var(--muted); }
+  .stat { display: flex; justify-content: space-between; padding: 4px 0; }
+  .stat b { font-variant-numeric: tabular-nums; }
+  .owes { display: flex; justify-content: space-between; padding: 6px 0; border-top: 1px solid var(--line); }
+  .owes:first-of-type { border-top: 0; }
+  .owes small { color: var(--muted); display: block; }
+  .btns { display: flex; flex-direction: column; gap: 8px; }
+  .btns button, .btns a { border: 0; border-radius: 12px; padding: 10px; font: inherit; cursor: pointer; text-align: center; text-decoration: none; }
+  .primary { background: var(--accent); color: #fff; } .ghost { background: var(--gray); color: var(--ink); }
+  .typing { align-self: flex-start; color: var(--muted); font-size: 13px; padding: 4px 10px; }
+  @media (max-width: 1000px) { main { grid-template-columns: 1fr; height: auto; } .phone { height: 560px; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>🪙 <span>Penny</span></h1>
+  <p>Add her to your chats. Your texts become your receipts.</p>
+</header>
+<main>
+  <!-- Client group chat -->
+  <section class="phone">
+    <div class="phone-head">
+      <div class="tabs" id="tabs"></div>
+      <div class="title" id="chatTitle"></div>
+      <div class="sub">iMessage · Penny is in this chat</div>
+    </div>
+    <div class="thread" id="clientThread"></div>
+    <div class="compose">
+      <select id="sender"></select>
+      <input type="text" id="clientInput" placeholder="iMessage">
+      <label title="Send a payment screenshot">📷<input type="file" id="photo" accept="image/*" hidden></label>
+      <button id="clientSend">Send</button>
+    </div>
+    <div class="script"><button id="nextLine">▶ next scripted line</button><span id="scriptHint"></span></div>
+  </section>
+
+  <!-- Owner's private chat with Penny -->
+  <section class="phone">
+    <div class="phone-head">
+      <div class="title">🪙 Penny</div>
+      <div class="sub">Private · only Maya sees this</div>
+    </div>
+    <div class="thread" id="ownerThread"></div>
+    <div class="compose">
+      <input type="text" id="askInput" placeholder="Ask Penny… e.g. who owes me money?">
+      <button id="askSend">Send</button>
+    </div>
+  </section>
+
+  <!-- Books -->
+  <aside class="side">
+    <div class="card">
+      <h3>This week</h3>
+      <div class="stat"><span>Money in</span><b id="wIn">$0</b></div>
+      <div class="stat"><span>Spent</span><b id="wOut">$0</b></div>
+      <div class="stat"><span>Owed to you</span><b id="owedTotal">$0</b></div>
+    </div>
+    <div class="card">
+      <h3>Who owes you</h3>
+      <div id="owesList"><small style="color:var(--muted)">Nobody yet.</small></div>
+    </div>
+    <div class="card btns">
+      <a class="primary" href="/report" target="_blank">Lender-ready report →</a>
+      <button class="ghost" id="seedBtn">Load 6 weeks of history</button>
+      <button class="ghost" id="resetBtn">Reset demo</button>
+    </div>
+  </aside>
+</main>
+
+<script>
+const OWNER = "Maya";
+let chatId = "jess", state = null, waiting = {}, scriptPos = {};
+
+// Scripted lines so one person can demo both sides. Edit freely.
+const SCRIPTS = {
+  jess: [
+    ["Jess", "hiii are you free saturday for knotless braids? mid back length"],
+    ["Maya", "yes! 10am works. knotless mid back is $220"],
+    ["Jess", "hmm can you do 180?"],
+    ["Maya", "I can do 200 if you bring your own hair"],
+    ["Jess", "ok deal 🙏 sending the deposit now"],
+    ["Jess", "IMG:50"],
+    ["Maya", "got it thank you! see you sat 💕"],
+    ["Jess", "oh wait can you add beads like last time?"],
+    ["Maya", "beads are +15"],
+    ["Jess", "perfect add them, I'll pay the rest saturday"],
+  ],
+  priya: [
+    ["Priya", "hey can you do cornrows for my daughter thursday after school?"],
+    ["Maya", "of course, kids cornrows are $80"],
+    ["Priya", "ok book her! I'll send half now and half on thursday"],
+    ["Priya", "sent 40 on zelle"],
+  ],
+  dana: [
+    ["Dana", "thank you again for friday!! still owe you right?"],
+    ["Maya", "yes the other 90 whenever you can"],
+    ["Dana", "I'll venmo you after payday 😅"],
+  ],
+};
+
+const $ = (id) => document.getElementById(id);
+const money = (x) => "$" + Number(x).toLocaleString(undefined, {maximumFractionDigits: 2});
+const esc = (s) => (s || "").replace(/[&<>]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;"}[c]));
+
+async function api(path, body) {
+  const r = await fetch(path, {method: body === undefined ? "GET" : "POST",
+    headers: {"Content-Type": "application/json"}, body: body === undefined ? undefined : JSON.stringify(body)});
+  return r.json();
+}
+
+function renderTabs() {
+  $("tabs").innerHTML = Object.entries(state.chats).filter(([id]) => SCRIPTS[id] || state.chats[id].messages.length)
+    .map(([id, c]) => `<button class="${id === chatId ? "on" : ""}" data-id="${id}">${esc(c.client)}</button>`).join("");
+  $("tabs").querySelectorAll("button").forEach((b) => b.onclick = () => { chatId = b.dataset.id; render(); });
+  const c = state.chats[chatId];
+  $("chatTitle").textContent = `${OWNER}, ${c.client} & Penny`;
+  $("sender").innerHTML = [OWNER, c.client].map((n) => `<option>${n}</option>`).join("");
+  const s = SCRIPTS[chatId] || [], p = scriptPos[chatId] || 0;
+  $("nextLine").disabled = p >= s.length;
+  $("scriptHint").textContent = p < s.length ? `${s[p][0]}: ${s[p][1].startsWith("IMG:") ? "[payment screenshot]" : s[p][1]}` : "script done";
+}
+
+function stickToBottom(el, fn) {
+  const atBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 60;
+  fn();
+  if (atBottom) el.scrollTop = el.scrollHeight;
+}
+
+function renderClient() {
+  const msgs = state.chats[chatId].messages;
+  stickToBottom($("clientThread"), () => {
+    let last = null;
+    $("clientThread").innerHTML = msgs.map((m) => {
+      const mine = m.sender === OWNER, who = m.sender !== last ? `<div class="who ${mine ? "right" : ""}">${esc(m.sender)}</div>` : "";
+      last = m.sender;
+      return who + `<div class="b ${mine ? "right" : "left"}">${m.has_image ? '<div class="img">📷 Payment screenshot</div>' : ""}${esc(m.text)}</div>`;
+    }).join("") + (waiting[chatId] ? '<div class="typing">Penny is reading…</div>' : "");
+  });
+}
+
+function renderOwner() {
+  stickToBottom($("ownerThread"), () => {
+    $("ownerThread").innerHTML = (state.feed.length ? "" :
+      '<div class="b left ledger">Hi Maya! I\'m in your client chats. I\'ll text you here whenever money changes hands. Ask me anything about your books.</div>') +
+      state.feed.map((f) => {
+        if (f.sender === "owner") return `<div class="b right">${esc(f.text)}</div>`;
+        let extra = "";
+        if (f.event_id && f.event_status === "pending")
+          extra = `<div class="actions"><button class="yes" data-c="${f.event_id}">✓ Log it</button>
+                   <button class="edit" data-e="${f.event_id}">✏️ Edit</button><button class="no" data-r="${f.event_id}">✕</button></div>`;
+        else if (f.event_id) extra = `<div class="done-tag">${f.event_status === "confirmed" ? "✓ logged" : "skipped"}</div>`;
+        return `<div class="b left ledger">${esc(f.text)}${extra}</div>`;
+      }).join("");
+  });
+  $("ownerThread").querySelectorAll("[data-c]").forEach((b) => b.onclick = () => act(`/api/events/${b.dataset.c}/confirm`, {}));
+  $("ownerThread").querySelectorAll("[data-r]").forEach((b) => b.onclick = () => act(`/api/events/${b.dataset.r}/reject`, {}));
+  $("ownerThread").querySelectorAll("[data-e]").forEach((b) => b.onclick = () => {
+    const v = prompt("Correct amount?"); if (v) act(`/api/events/${b.dataset.e}/confirm`, {amount: parseFloat(v)});
+  });
+}
+
+function renderBooks() {
+  $("wIn").textContent = money(state.totals.week_income);
+  $("wOut").textContent = money(state.totals.week_expenses);
+  $("owedTotal").textContent = money(state.totals.owed_to_you);
+  const owing = state.balances.filter((b) => b.owed > 0);
+  $("owesList").innerHTML = owing.length ? owing.slice(0, 8).map((b) =>
+    `<div class="owes"><div>${esc(b.client)}<small>${b.next_due ? "due " + b.next_due : "paid " + money(b.paid) + " so far"}</small></div><b>${money(b.owed)}</b></div>`).join("")
+    : '<small style="color:var(--muted)">Nobody yet.</small>';
+}
+
+function render() { if (!state) return; renderTabs(); renderClient(); renderOwner(); renderBooks(); }
+
+async function refresh() {
+  const prevFeed = state ? state.feed.length : 0;
+  state = await api("/api/state");
+  if (state.feed.length !== prevFeed) waiting = {};
+  render();
+}
+
+async function act(path, body) { await api(path, body); await refresh(); }
+
+async function sendClient(sender, text, image) {
+  const body = {sender, text};
+  if (image) { body.image_b64 = image; body.image_type = "image/png"; }
+  waiting[chatId] = true;
+  setTimeout(() => { waiting = {}; render(); }, 15000);
+  await act(`/api/chats/${chatId}/messages`, body);
+}
+
+// A generic, made-up payment confirmation, drawn on the fly (synthetic data only).
+function fakeReceipt(amount, from, to) {
+  const c = document.createElement("canvas"); c.width = 360; c.height = 420;
+  const g = c.getContext("2d");
+  g.fillStyle = "#fff"; g.fillRect(0, 0, 360, 420);
+  g.fillStyle = "#1c1c1e"; g.textAlign = "center";
+  g.font = "600 18px -apple-system, sans-serif"; g.fillText("Payment sent", 180, 60);
+  g.fillStyle = "#34c759"; g.beginPath(); g.arc(180, 120, 32, 0, 7); g.fill();
+  g.fillStyle = "#fff"; g.font = "bold 34px sans-serif"; g.fillText("✓", 180, 133);
+  g.fillStyle = "#1c1c1e"; g.font = "bold 52px -apple-system, sans-serif"; g.fillText("$" + amount + ".00", 180, 230);
+  g.font = "16px -apple-system, sans-serif"; g.fillStyle = "#555";
+  g.fillText(`From ${from}  →  To ${to}`, 180, 275);
+  g.fillText("For: braids deposit 💇🏾‍♀️", 180, 305);
+  g.fillText(new Date().toLocaleString(), 180, 335);
+  g.fillStyle = "#999"; g.font = "12px sans-serif"; g.fillText("Ref #A7F3-22K9", 180, 380);
+  return c.toDataURL("image/png").split(",")[1];
+}
+
+$("clientSend").onclick = () => {
+  const t = $("clientInput").value.trim(); if (!t) return;
+  $("clientInput").value = ""; sendClient($("sender").value, t);
+};
+$("clientInput").onkeydown = (e) => { if (e.key === "Enter") $("clientSend").click(); };
+$("photo").onchange = (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  const r = new FileReader();
+  r.onload = () => sendClient($("sender").value, "", r.result.split(",")[1]);
+  r.readAsDataURL(f); e.target.value = "";
+};
+$("nextLine").onclick = () => {
+  const s = SCRIPTS[chatId] || [], p = scriptPos[chatId] || 0; if (p >= s.length) return;
+  scriptPos[chatId] = p + 1;
+  const [who, text] = s[p];
+  if (text.startsWith("IMG:")) sendClient(who, "", fakeReceipt(text.slice(4), who, OWNER));
+  else sendClient(who, text);
+};
+$("askSend").onclick = async () => {
+  const t = $("askInput").value.trim(); if (!t) return;
+  $("askInput").value = "";
+  state.feed.push({sender: "owner", text: t}); render();
+  await act("/api/ask", {text: t});
+};
+$("askInput").onkeydown = (e) => { if (e.key === "Enter") $("askSend").click(); };
+$("seedBtn").onclick = () => act("/api/seed", {});
+$("resetBtn").onclick = () => { if (confirm("Clear everything?")) { scriptPos = {}; act("/api/reset", {}); } };
+
+refresh(); setInterval(refresh, 1500);
+</script>
+</body>
+</html>
