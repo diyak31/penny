@@ -75,10 +75,22 @@
   .section { margin-top: 16px; }
   .foot { margin-top: 24px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 14px; }
 
-  @media print { body { background: #fff; } .page { box-shadow: none; margin: 0; border: 0; padding: 0; } .actions { display: none; } }
+  .tabs { display: inline-flex; gap: 4px; background: #f1ebe4; padding: 4px; border-radius: 999px; margin-top: 22px; }
+  .tabs button { border: 0; background: transparent; border-radius: 999px; padding: 9px 18px; font: 600 14px var(--sans); color: var(--ink-2); cursor: pointer; }
+  .tabs button.on { background: var(--paper); color: var(--ink); box-shadow: 0 2px 6px -2px rgba(59,34,50,.3); }
+  .view { display: none; margin-top: 22px; } .view.on { display: block; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .scroll { max-height: 360px; overflow-y: auto; }
+  .tag { font: 600 10.5px var(--sans); letter-spacing: .5px; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; }
+  .tag.payment { background: #e3f4ec; color: var(--green); } .tag.expense { background: #f1ebe4; color: var(--ink-2); } .tag.order { background: var(--copper-soft); color: var(--copper); }
+  td.payment { color: var(--green); } td.expense { color: var(--ink-2); } td.order { color: var(--muted); }
+  .loan-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 16px; }
+  .lnums { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .lnums .k b { font-size: 24px; }
+  @media print { body { background: #fff; } .page { box-shadow: none; margin: 0; border: 0; padding: 0; } .actions, .tabs, #books { display: none !important; } #loan { display: block !important; } }
   @media (max-width: 760px) {
     .page { padding: 24px 16px; margin: 0; border-radius: 0; }
-    .lead, .mix { grid-template-columns: 1fr; } .nums { grid-template-columns: 1fr 1fr; }
+    .lead, .mix, .two, .loan-grid { grid-template-columns: 1fr; } .nums { grid-template-columns: 1fr 1fr; }
     .top { flex-direction: column; align-items: flex-start; }
   }
 </style>
@@ -86,57 +98,85 @@
 <body>
 <div class="page">
   <div class="bar-top">
-    <div class="brand"><div class="coin"></div>Penny · Verified cash-flow report</div>
-    <div class="actions"><button onclick="window.print()">Download PDF</button></div>
+    <div class="brand"><div class="coin"></div>Penny · Cash-flow records</div>
+    <div class="actions"><button onclick="window.print()">Download loan report (PDF)</button></div>
   </div>
 
   <div class="top">
     <div>
-      <div class="eyebrow">Home hair-braiding business · Income statement</div>
+      <div class="eyebrow">Home hair-braiding business</div>
       <h1>{{business}}</h1>
-      <div class="muted">{{period}} · Generated {{generated}}</div>
+      <div class="muted">{{period}} · Updated {{generated}}</div>
     </div>
     <span class="badge">✓ {{txns}} transactions, each confirmed by the owner</span>
   </div>
 
-  <p class="summary">{{summary}}</p>
+  <div class="tabs"><button data-v="books">My books</button><button data-v="loan">Loan readiness</button></div>
 
-  <div class="lead">
-    <div class="panel ready">
-      <h2>Loan readiness</h2>
-      <div class="big">{{afford}}<small> / month</small></div>
-      <div class="cap">Estimated affordable repayment (25% of average monthly net income)</div>
-      <ul>{{signals}}</ul>
+  <!-- For Maya: track her business -->
+  <div class="view" id="books">
+    <div class="nums">
+      <div class="k"><div>Avg week</div><b>{{avg}}</b></div>
+      <div class="k"><div>Total income</div><b>{{income}}</b></div>
+      <div class="k"><div>Expenses</div><b>{{expenses}}</b></div>
+      <div class="k"><div>Net income</div><b>{{net}}</b></div>
+      <div class="k"><div>Owed to you</div><b>{{receivables}}</b></div>
     </div>
     <div class="panel">
       <h2>Weekly income</h2>
       <div class="chart">{{bars}}</div>
       <div class="foot-note">* Current week, still in progress</div>
     </div>
+    <div class="two">
+      <div class="panel"><h2>Who owes you</h2><table>{{owing}}</table></div>
+      <div class="panel"><h2>How you get paid</h2>{{paid_by}}<h2 style="margin-top:20px">Top services</h2>{{services}}</div>
+    </div>
+    <div class="panel section">
+      <h2>All transactions</h2>
+      <div class="scroll"><table>{{recent}}</table></div>
+    </div>
   </div>
 
-  <div class="nums">
-    <div class="k"><div>Avg week</div><b>{{avg}}</b></div>
-    <div class="k"><div>Total income</div><b>{{income}}</b></div>
-    <div class="k"><div>Expenses</div><b>{{expenses}}</b></div>
-    <div class="k"><div>Net income</div><b>{{net}}</b></div>
-    <div class="k"><div>Owed to her</div><b>{{receivables}}</b></div>
+  <!-- For a lender: can she repay? -->
+  <div class="view" id="loan">
+    <p class="summary" style="margin-top:0">{{summary}}</p>
+    <div class="loan-grid">
+      <div class="panel ready">
+        <h2>Loan readiness</h2>
+        <div class="big">{{afford}}<small> / month</small></div>
+        <div class="cap">Estimated affordable repayment (25% of average monthly net income)</div>
+        <ul>{{signals}}</ul>
+      </div>
+      <div class="lnums">
+        <div class="k"><div>Average weekly income</div><b>{{avg}}</b></div>
+        <div class="k"><div>Net income, period</div><b>{{net}}</b></div>
+        <div class="k"><div>Weeks with income</div><b>{{weeks_ok}}</b></div>
+        <div class="k"><div>Repeat clients</div><b>{{repeat}} of {{clients}}</b></div>
+        <div class="k"><div>Expenses, period</div><b>{{expenses}}</b></div>
+        <div class="k"><div>Receivables</div><b>{{receivables}}</b></div>
+      </div>
+    </div>
+    <div class="panel section">
+      <h2>Weekly income</h2>
+      <div class="chart">{{bars}}</div>
+      <div class="foot-note">* Current week, still in progress</div>
+    </div>
+    <div class="foot">
+      Every figure is computed from bookings and payments recorded in the owner's client conversations and confirmed by her.
+      The repayment estimate is a rule of thumb, not a credit decision. Demo uses synthetic data only.
+    </div>
   </div>
 
-  <div class="mix">
-    <div class="panel"><h2>How she gets paid</h2>{{paid_by}}</div>
-    <div class="panel"><h2>Top services by revenue</h2>{{services}}</div>
-  </div>
-
-  <div class="panel section">
-    <h2>Recent confirmed transactions</h2>
-    <table>{{recent}}</table>
-  </div>
-
-  <div class="foot">
-    Every figure is computed from bookings and payments recorded in the owner's client conversations and confirmed by her.
-    The repayment estimate is a rule of thumb, not a credit decision. Demo uses synthetic data only.
-  </div>
+<script>
+  function show(v) {
+    document.querySelectorAll(".view").forEach((el) => el.classList.toggle("on", el.id === v));
+    document.querySelectorAll(".tabs button").forEach((b) => b.classList.toggle("on", b.dataset.v === v));
+    document.querySelector(".actions").style.visibility = v === "loan" ? "visible" : "hidden";
+    history.replaceState(null, "", "#" + v);
+  }
+  document.querySelectorAll(".tabs button").forEach((b) => b.onclick = () => show(b.dataset.v));
+  show(location.hash === "#loan" ? "loan" : "books");
+</script>
 </div>
 </body>
 </html>

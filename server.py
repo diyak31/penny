@@ -293,7 +293,8 @@ def report_stats():
         "outstanding_receivables": sum(b["owed"] for b in db.balances() if b["owed"] > 0),
         "paid_by": sorted(paid_by.items(), key=lambda x: -x[1]),
         "services": sorted(services.items(), key=lambda x: -x[1])[:4],
-        "recent": [e for e in reversed(evs) if e["type"] in ("payment", "expense")][:6],
+        "recent": [e for e in reversed(evs) if e["type"] in ("payment", "expense", "order")][:25],
+        "owing": [b for b in db.balances() if b["owed"] > 0],
     }
 
 
@@ -326,10 +327,15 @@ def report():
     ]
     signals = "".join(f"<li class='{'ok' if ok else 'warn'}'><i>{'✓' if ok else '!'}</i><b>{t}</b> {d}</li>"
                       for ok, t, d in checks)
+    kind = {"payment": "Payment", "expense": "Expense", "order": "Booking"}
     recent = "".join(
-        f"<tr><td>{datetime.fromisoformat(e['ts']):%b %-d}</td><td>{e['client']}</td>"
-        f"<td>{e['description']}</td><td class='{'out' if e['type'] == 'expense' else 'in'}'>"
-        f"{'−' if e['type'] == 'expense' else '+'}{money(e['amount'])}</td></tr>" for e in s["recent"])
+        f"<tr><td>{datetime.fromisoformat(e['ts']):%b %-d}</td><td><span class='tag {e['type']}'>{kind[e['type']]}</span></td>"
+        f"<td>{e['client']}</td><td>{e['description']}</td><td class='{e['type']}'>"
+        f"{'−' if e['type'] == 'expense' else '+' if e['type'] == 'payment' else ''}{money(e['amount'])}</td></tr>"
+        for e in s["recent"])
+    owing = "".join(
+        f"<tr><td>{b['client']}</td><td>{'due ' + datetime.fromisoformat(b['next_due']).strftime('%b %-d') if b['next_due'] else ''}</td>"
+        f"<td class='payment'>{money(b['owed'])}</td></tr>" for b in s["owing"]) or "<tr><td>Nobody owes you right now.</td></tr>"
     html = (STATIC / "report.html").read_text()
     for k, v in {
         "{{business}}": s["business"], "{{period}}": s["period"], "{{summary}}": summary,
@@ -339,7 +345,8 @@ def report():
         "{{signals}}": signals, "{{bars}}": bars,
         "{{paid_by}}": _rows(s["paid_by"], s["total_income"]),
         "{{services}}": _rows(s["services"], sum(v for _, v in s["services"])),
-        "{{recent}}": recent,
+        "{{recent}}": recent, "{{owing}}": owing,
+        "{{weeks_ok}}": f"{s['weeks_with_income']}/{s['total_weeks']}",
         "{{clients}}": str(s["unique_clients"]), "{{repeat}}": str(s["repeat_clients"]),
         "{{txns}}": str(s["transactions_logged"]),
         "{{receivables}}": money(s["outstanding_receivables"]),
