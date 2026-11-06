@@ -45,7 +45,9 @@ Rules:
 - Resolve references using the earlier chat ("same as last time", "half now", "the rest").
 - Only log events completed by the newest message; earlier messages were already processed.
 - Today is {{today}}. Convert relative dates ("Saturday") to YYYY-MM-DD.
-- If money is mentioned but it's unclear what it is, return no events and ask a short question."""
+- question_for_owner should almost always be null. Never ask about negotiations still in progress or
+  payments that are only announced ("sending now"); just wait for later messages. Only ask when money
+  definitely changed hands but the amount or purpose is genuinely unclear."""
 
 
 def _format_history(history):

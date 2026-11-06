@@ -118,7 +118,9 @@ def add_feed(sender, text, event_id=None):
 def feed():
     with conn() as c:
         rows = c.execute(
-            """SELECT f.*, e.status AS event_status FROM owner_feed f
+            """SELECT f.*, e.status AS event_status, e.type AS event_type, e.amount AS event_amount,
+                      e.client AS event_client, e.description AS event_desc, e.due AS event_due
+               FROM owner_feed f
                LEFT JOIN events e ON e.id = f.event_id ORDER BY f.id"""
         ).fetchall()
     return [dict(r) for r in rows]

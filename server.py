@@ -1,6 +1,7 @@
 """Penny: a silent bookkeeper for the chats women already run their businesses in."""
 import os
 import re
+import threading
 from collections import defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -39,8 +40,17 @@ def notify(text, event_id=None):
     sendblue.text_owner(text + ("\n\nReply YES to log, NO to skip, or a corrected amount." if event_id else ""))
 
 
-def process_message(chat_id, client_name, image_b64=None, image_type="image/png", image_url=None):
-    history = db.recent_messages(chat_id)
+_lock = threading.Lock()
+
+
+def process_message(chat_id, client_name, msg_id, image_b64=None, image_type="image/png", image_url=None):
+    with _lock:  # one message at a time, in order
+        _process(chat_id, client_name, msg_id, image_b64, image_type, image_url)
+
+
+def _process(chat_id, client_name, msg_id, image_b64, image_type, image_url):
+    # history up to and including this message, even if newer ones have arrived since
+    history = [m for m in db.recent_messages(chat_id, 60) if m["id"] <= msg_id][-30:]
     try:
         result = engine.extract(history, client_name, image_b64, image_type, image_url)
     except Exception as e:  # keep the demo alive if one call fails
@@ -95,8 +105,8 @@ def state():
 def post_message(chat_id: str, body: ChatMessage, bg: BackgroundTasks):
     client_name = DEMO_CHATS.get(chat_id, chat_id.title())
     db.ensure_chat(chat_id, client_name)
-    db.add_message(chat_id, body.sender, body.text, has_image=bool(body.image_b64))
-    bg.add_task(process_message, chat_id, client_name, body.image_b64, body.image_type)
+    msg_id = db.add_message(chat_id, body.sender, body.text, has_image=bool(body.image_b64))
+    bg.add_task(process_message, chat_id, client_name, msg_id, body.image_b64, body.image_type)
     return {"ok": True}
 
 
@@ -203,8 +213,8 @@ async def imessage_webhook(request: Request, bg: BackgroundTasks):
     client_name = _name(others[0]) if others else sender
     chat_id = group_id or _digits(sender_num)
     db.ensure_chat(chat_id, client_name)
-    db.add_message(chat_id, sender, text, has_image=bool(image_url))
-    bg.add_task(process_message, chat_id, client_name, None, "image/png", image_url)
+    msg_id = db.add_message(chat_id, sender, text, has_image=bool(image_url))
+    bg.add_task(process_message, chat_id, client_name, msg_id, None, "image/png", image_url)
     return {"ok": True}
 
 
@@ -239,7 +249,7 @@ def report_stats():
         if e["type"] == "order":
             clients[e["client"]] += 1
     return {
-        "business": f"{engine.OWNER}'s Braids (home hair-braiding)",
+        "business": f"{engine.OWNER}'s Braids",
         "period": f"{weeks[0]} to {datetime.now():%Y-%m-%d}" if weeks else "n/a",
         "weeks": [{"week_of": w, **weekly[w], "net": weekly[w]["income"] - weekly[w]["expenses"]}
                   for w in weeks],
