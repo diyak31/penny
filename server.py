@@ -26,6 +26,8 @@ db.init()
 DEMO_CHATS = {"jess": "Jess", "priya": "Priya", "dana": "Dana"}
 for cid, name in DEMO_CHATS.items():
     db.ensure_chat(cid, name)
+if not db.events() and not db.events("pending"):  # fresh database: open with a lived-in business
+    seed.baseline()
 
 VERB = {"order": "booking", "payment": "payment", "expense": "expense", "refund": "refund"}
 
@@ -147,12 +149,7 @@ def reset():
     db.reset()
     for cid, name in DEMO_CHATS.items():
         db.ensure_chat(cid, name)
-    return {"ok": True}
-
-
-@app.post("/api/seed")
-def seed_month():
-    seed.seed(weeks=6)
+    seed.baseline()
     return {"ok": True}
 
 

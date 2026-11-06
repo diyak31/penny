@@ -235,7 +235,6 @@
     </div>
     <a class="cta" href="/report" target="_blank">View lender-ready report →<small>Built from confirmed transactions</small></a>
     <div class="ghosts">
-      <button id="seedBtn">Load 6 weeks of history</button>
       <button id="resetBtn">Reset demo</button>
     </div>
   </aside>
@@ -259,16 +258,12 @@ const SCRIPTS = {
     ["Maya", "beads are +15"],
     ["Jess", "perfect add them, I'll pay the rest saturday"],
   ],
-  priya: [
-    ["Priya", "hey can you do cornrows for my daughter thursday after school?"],
-    ["Maya", "of course, kids cornrows are $80"],
-    ["Priya", "ok book her! I'll send half now and half on thursday"],
-    ["Priya", "sent 40 on zelle"],
-  ],
   dana: [
-    ["Dana", "thank you again for friday!! still owe you right?"],
-    ["Maya", "yes the other 90 whenever you can"],
-    ["Dana", "I'll venmo you after payday 😅"],
+    ["Dana", "hey!! I know I still owe you the 90 😩"],
+    ["Maya", "no worries girl, whenever you can"],
+    ["Dana", "I'll venmo you after payday on friday!"],
+    ["Dana", "ok payday came early lol just sent it"],
+    ["Dana", "IMG:90"],
   ],
 };
 const KIND = {order: "New booking", payment: "Payment received", expense: "Expense", refund: "Refund"};
@@ -401,7 +396,7 @@ function fakeReceipt(amount, from, to) {
   g.fillStyle = "#1c1c1e"; g.font = "bold 52px -apple-system, sans-serif"; g.fillText("$" + amount + ".00", 180, 230);
   g.font = "16px -apple-system, sans-serif"; g.fillStyle = "#555";
   g.fillText(`From ${from}  →  To ${to}`, 180, 275);
-  g.fillText("For: braids deposit", 180, 305);
+  g.fillText("For: hair appointment", 180, 305);
   g.fillText(new Date().toLocaleString(), 180, 335);
   g.fillStyle = "#999"; g.font = "12px sans-serif"; g.fillText("Ref #A7F3-22K9", 180, 380);
   return c.toDataURL("image/png").split(",")[1];
@@ -432,8 +427,7 @@ $("askSend").onclick = async () => {
   await act("/api/ask", {text: t});
 };
 $("askInput").onkeydown = (e) => { if (e.key === "Enter") $("askSend").click(); };
-$("seedBtn").onclick = () => act("/api/seed", {});
-$("resetBtn").onclick = () => { if (confirm("Clear everything?")) { scriptPos = {}; act("/api/reset", {}); } };
+$("resetBtn").onclick = () => { if (confirm("Reset the demo to its starting point?")) { scriptPos = {}; act("/api/reset", {}); } };
 
 refresh(); setInterval(refresh, 1500);
 </script>
