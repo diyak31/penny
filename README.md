@@ -31,16 +31,16 @@ cp .env.example .env   # add your ANTHROPIC_API_KEY
 ```
 
 Open http://localhost:8000 for the landing page, or http://localhost:8000/demo for the demo. Use **▶ next scripted line** to play both sides of a conversation, or type
-your own. The demo opens with 6 weeks of synthetic history; **Reset demo** restores it. Open the **lender-ready report** from the books panel.
+your own. The demo opens with 6 weeks of synthetic history; **Reset demo** restores it. From the books panel, open **My books** (all transactions, who owes you, weekly income) or the **Loan readiness** report (affordable repayment estimate, steadiness checks, PDF download).
 
 ## How it works
 
 | File | Role |
 |---|---|
-| `engine.py` | Claude (`claude-opus-5-5`, structured outputs) extracts events from the newest message plus chat history, answers the owner's questions, and writes the report summary |
+| `engine.py` | Claude (`claude-opus-5-5`, structured outputs) extracts events from the newest message plus chat history and answers the owner's questions |
 | `db.py` | SQLite ledger. **Claude extracts; code does all the arithmetic**, so balances can't be hallucinated |
-| `server.py` | FastAPI: chat API, confirmations, owner Q&A, lender report, and an `/webhook/imessage` endpoint for a live iMessage provider |
+| `server.py` | FastAPI: landing page (`/`), demo (`/demo`), chat API, confirmations, owner Q&A, My books + Loan readiness report (`/report`), and the Sendblue iMessage webhook (`/webhook/imessage`) |
 | `seed.py` | Synthetic history for the report |
-| `static/` | iMessage-style demo UI and report page |
+| `static/` | Landing page, iMessage-style demo, report, and coin logo |
 
 All data is synthetic. No real personal or financial information is used.
