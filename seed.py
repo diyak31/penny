@@ -38,7 +38,7 @@ def history(weeks=6, rng_seed=7):
             deposit = 50 if price >= 120 else 0
             if deposit:
                 db.add_event("seed", client, "payment", deposit, f"deposit, {method}", None, 1.0, None,
-                             status="confirmed", ts=_ts(d - timedelta(days=rng.randint(2, 5)), 20))
+                             status="confirmed", ts=_ts(max(start, d - timedelta(days=rng.randint(2, 5))), 20))
             # a couple of older clients still owe a little; recent weeks are mostly paid
             rest = price - deposit
             if d < today - timedelta(days=10) and rng.random() < .1:

@@ -276,11 +276,8 @@ def report_stats():
 @app.get("/report", response_class=HTMLResponse)
 def report():
     s = report_stats()
-    try:
-        summary = engine.report_summary(s)
-    except Exception as e:
-        print("summary failed:", e)
-        summary = ""
+    summary = (f"Income in {s['weeks_with_income']} of {s['total_weeks']} weeks, averaging "
+               f"${s['avg_weekly_income']:,.0f} a week, from {s['unique_clients']} clients, {s['repeat_clients']} of them regulars.")
     top = max([w["income"] for w in s["weeks"]] or [1]) or 1
     bars = "".join(
         f"<div class='bar'><span>{w['week_of'][5:]}</span><div style='width:{w['income'] / top * 100:.0f}%'></div>"
@@ -289,7 +286,7 @@ def report():
     for k, v in {
         "{{business}}": s["business"], "{{period}}": s["period"], "{{summary}}": summary,
         "{{income}}": money(s["total_income"]), "{{expenses}}": money(s["total_expenses"]),
-        "{{net}}": money(s["net_income"]), "{{avg}}": money(s["avg_weekly_income"]),
+        "{{net}}": money(s["net_income"]), "{{avg}}": f"${s['avg_weekly_income']:,.0f}",
         "{{consistency}}": f"{s['weeks_with_income']}/{s['total_weeks']}",
         "{{clients}}": str(s["unique_clients"]), "{{repeat}}": str(s["repeat_clients"]),
         "{{txns}}": str(s["transactions_logged"]),
