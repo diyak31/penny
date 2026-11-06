@@ -92,6 +92,11 @@ def landing():
     return FileResponse(STATIC / "landing.html")
 
 
+@app.get("/coin.svg")
+def coin():
+    return FileResponse(STATIC / "coin.svg", media_type="image/svg+xml")
+
+
 @app.get("/demo")
 def demo():
     return FileResponse(STATIC / "index.html")

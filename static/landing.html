@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/coin.svg" type="image/svg+xml">
 <title>Penny</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -163,7 +164,7 @@
     .stat-grid { grid-template-columns: 1fr 1fr; }
     .asks, .steps, .trust { grid-template-columns: 1fr; }
     .links a:not(.btn) { display: none; }
-    .stage { min-height: 540px; }
+    .stage { min-height: 540px; } .hero .doodle { display: none; }
   }
   @media (max-width: 560px) {
     section { padding: 64px 0; } .wrap { padding: 0 16px; }
@@ -171,6 +172,8 @@
     .float-card { right: -4px; width: 220px; } .phone { width: 270px; height: 540px; }
     details p { margin-left: 0; } .doodle { display: none; }
   }
+  /* coin logo (overrides the earlier gradient styles) */
+  .coin { background: url(/coin.svg) center / contain no-repeat !important; color: transparent !important; font-size: 0 !important; border-radius: 50%; box-shadow: 0 3px 8px -2px rgba(110,50,25,.45) !important; }
 </style>
 </head>
 <body>

@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="/coin.svg" type="image/svg+xml">
 <title>Income Report</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -41,6 +42,8 @@
   .foot { margin-top: 36px; font-size: 12px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 16px; }
   @media print { body { background: #fff; } .page { box-shadow: none; margin: 0; border: 0; } }
   @media (max-width: 700px) { .page { padding: 28px 16px; margin: 0; border-radius: 0; } .hero, .grid { grid-template-columns: 1fr 1fr; } .top { flex-direction: column; align-items: flex-start; } }
+  /* coin logo (overrides the earlier gradient styles) */
+  .coin { background: url(/coin.svg) center / contain no-repeat !important; color: transparent !important; font-size: 0 !important; border-radius: 50%; box-shadow: 0 3px 8px -2px rgba(110,50,25,.45) !important; }
 </style>
 </head>
 <body>
