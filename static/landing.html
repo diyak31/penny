@@ -91,7 +91,7 @@
   .stats { background: var(--plum); color: #fff8f0; border-radius: 40px; margin: 0 16px; }
   .stats .eyebrow { color: #f0b48c; }
   .stats .lede { color: rgba(255,248,240,.75); }
-  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 56px; }
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 56px; }
   .stat { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); border-radius: 26px; padding: 26px 24px; }
   .stat .num { font: 600 clamp(44px, 5vw, 60px)/1 var(--serif); letter-spacing: -1.5px; color: #fff; }
   .stat .num small { font-size: .5em; letter-spacing: 0; }
@@ -161,7 +161,7 @@
 
   @media (max-width: 960px) {
     .hero .wrap, .feed-wrap { grid-template-columns: 1fr; }
-    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .stat-grid { grid-template-columns: 1fr; }
     .asks, .steps, .trust { grid-template-columns: 1fr; }
     .links a:not(.btn) { display: none; }
     .stage { min-height: 540px; } .hero .doodle { display: none; }
@@ -224,15 +224,14 @@
 <section id="why" class="stats">
   <div class="wrap">
     <div class="eyebrow">Why Penny</div>
-    <h2>Millions of women run real businesses. <em>On paper, they don't exist.</em></h2>
-    <p class="lede">Braiders, bakers, cleaners, nannies. The work is real and the money is real, but it all lives in text threads and payment apps. No books means no proof, and no proof means no loan.</p>
+    <h2>Hundreds of millions of women run real businesses. <em>On paper, they don't exist.</em></h2>
+    <p class="lede">Market vendors, tailors, braiders, cooks. The work is real and the money is real, but it lives in chat threads, cash and mobile money. No books means no proof, and no proof means no loan. Penny starts on iMessage in the US and goes worldwide on WhatsApp next.</p>
     <div class="stat-grid">
-      <div class="stat"><div class="num">14.5M</div><p>women-owned businesses in the US, 39% of all firms.</p></div>
-      <div class="stat hot"><div class="num">6.2<small>%</small></div><p>of US business revenue goes to them. 39% of the firms, 6% of the money.</p></div>
-      <div class="stat"><div class="num">~9<small> in </small>10</div><p>have no employees. She's the stylist, the scheduler <i>and</i> the accountant.</p></div>
-      <div class="stat"><div class="num">1<small> in </small>10</div><p>US adults have no credit record at all, so lenders can't see them.</p></div>
+      <div class="stat"><div class="num">740M</div><p>women worldwide have no bank account. That's more than half of all unbanked adults.</p></div>
+      <div class="stat hot"><div class="num">$1.7T</div><p>in credit that women-owned small businesses in developing markets need and can't get.</p></div>
+      <div class="stat"><div class="num">92<small>%</small></div><p>of working women in developing countries earn in the informal economy, off the books and invisible to lenders.</p></div>
     </div>
-    <div class="sources">Sources: <a href="https://smallbusinessresources.wf.com/wp-content/uploads/2025/01/wells-fargo-2025-impact-of-women-owned-businesses.pdf" target="_blank" rel="noopener">Wells Fargo, Impact of Women-Owned Businesses (2024 data)</a> · <a href="https://www.consumerfinance.gov/about-us/newsroom/cfpb-report-finds-26-million-consumers-are-credit-invisible" target="_blank" rel="noopener">CFPB, Credit Invisibles</a></div>
+    <div class="sources">Sources: <a href="https://blogs.worldbank.org/en/developmenttalk/unveiling-global-findex-database-2021-five-charts" target="_blank" rel="noopener">World Bank, Global Findex 2021</a> · <a href="https://www.ifc.org/en/insights-reports/2022/closing-the-gender-finance-gap-through-blended-finance" target="_blank" rel="noopener">IFC, Closing the Gender Finance Gap</a> · <a href="https://wiego.org/node/72" target="_blank" rel="noopener">ILO, Women and Men in the Informal Economy (2018), via WIEGO</a></div>
   </div>
 </section>
 
